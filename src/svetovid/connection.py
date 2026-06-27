@@ -83,13 +83,30 @@ def get_resolve():
         return _resolve
 
 
+def get_project_manager():
+    """Return the Project Manager."""
+    return get_resolve().GetProjectManager()
+
+
+def get_media_storage():
+    """Return the Media Storage object for browsing volumes and files."""
+    return get_resolve().GetMediaStorage()
+
+
 def get_project():
     """Return the open project, or raise if none is open."""
-    pm = get_resolve().GetProjectManager()
-    project = pm.GetCurrentProject()
+    project = get_project_manager().GetCurrentProject()
     if project is None:
         raise ResolveError("No project is open in Resolve.")
     return project
+
+
+def get_media_pool():
+    """Return the current project's Media Pool, or raise if no project is open."""
+    pool = get_project().GetMediaPool()
+    if pool is None:
+        raise ResolveError("Could not reach the Media Pool of the open project.")
+    return pool
 
 
 def get_timeline():

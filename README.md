@@ -22,12 +22,22 @@ Runs on your machine, alongside your open Resolve project.
 
 ## Tools
 
-| Tool | What it does |
-|---|---|
-| `get_state` | Orient. Returns the open project, the current timeline, frame rate, resolution, track counts, clip count and timecode. Call this first. |
-| `render_current_frame` | See the edit. Exports the frame at the playhead and returns it as an image. |
+Eighty nine tools spanning the Resolve scripting API, from orienting in a project to delivering the final file. The two at the top are the heart: Svetovid renders the real frame so the agent edits against what is on screen, not blind metadata. Everything destructive sits behind a confirm gate, the tool previews the action and only applies it when called again with `confirm` set, so a first exploratory call never deletes work or starts a render.
 
-More tools land as the build grows: media import, timeline assembly, markers, render and export, each destructive action behind a confirm gate.
+| Group | Tools |
+|---|---|
+| See and navigate | `get_state`, `render_current_frame`, `open_page`, `get_playhead`, `set_playhead_timecode`, `set_playhead_frame`, `get_current_item` |
+| Project | `list_projects`, `get_project_info`, `create_project`, `load_project`, `save_project`, `get_project_settings`, `set_project_setting` |
+| Media | `browse_storage`, `import_media`, `list_media_pool`, `create_bin`, `set_current_bin`, `get_clip_properties`, `set_clip_property`, `set_clip_mark_in_out`, `delete_media_clips` |
+| Timeline | `list_timelines`, `create_empty_timeline`, `set_current_timeline`, `rename_timeline`, `duplicate_timeline`, `delete_timeline`, `get_timeline_settings`, `set_timeline_setting`, `set_timeline_start_timecode`, `add_track`, `delete_track`, `set_track_name`, `set_track_enabled`, `set_track_locked` |
+| Edit and assembly | `create_timeline_from_clips`, `append_to_timeline`, `insert_title`, `insert_fusion_title`, `insert_generator`, `create_compound_clip`, `create_fusion_clip`, `detect_scene_cuts`, `delete_timeline_items` |
+| Clip transforms | `list_timeline_items`, `get_item_properties`, `set_item_property`, `set_item_transform`, `set_item_enabled`, `set_item_clip_color`, `smart_reframe`, `stabilize`, `add_fusion_comp` |
+| Markers | `add_marker`, `list_markers`, `delete_marker`, `delete_markers_by_color` |
+| Colour | `list_color_groups`, `add_color_group`, `assign_to_color_group`, `get_node_graph_info`, `set_node_lut`, `set_node_enabled`, `set_cdl`, `copy_grade`, `reset_grades`, `grab_still` |
+| Audio | `insert_audio_at_playhead`, `transcribe_audio`, `clear_transcription`, `set_voice_isolation`, `create_subtitles_from_audio`, `auto_sync_audio` |
+| Render and deliver | `list_render_presets`, `load_render_preset`, `get_render_formats`, `get_render_codecs`, `set_render_format_codec`, `set_render_settings`, `add_render_job`, `list_render_jobs`, `start_render`, `stop_render`, `get_render_status`, `delete_render_jobs`, `list_quick_export_presets`, `quick_export` |
+
+Every tool returns plain data the agent can read, and reaches Resolve through the shared scaffolding in `connection.py` (the live handle), `gate.py` (the confirm gate) and `serialize.py` (objects to plain dicts). One module per group under `src/svetovid/tools/`.
 
 ## Requirements
 
