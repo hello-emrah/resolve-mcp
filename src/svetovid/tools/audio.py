@@ -68,6 +68,77 @@ def _find_clip(name: str):
     return None
 
 
+def add_audio_to_timeline(
+    clip_name: str,
+    track_index: int = 1,
+    at_frame: int | None = None,
+    start_frame: int | None = None,
+    end_frame: int | None = None,
+) -> dict:
+    """Place an audio clip from the media pool onto an audio track of the timeline.
+
+    This is how music, a voiceover or a sound bed lands inside Resolve, so the
+    whole edit lives in the project rather than being muxed on afterwards. Import
+    the file first with import_media, then pass its MediaPoolItem ``clip_name``.
+    ``track_index`` is the 1-based audio track (add one first with add_track if
+    needed). ``at_frame`` is the timeline frame to drop it at, defaulting to the
+    timeline start so a music bed lines up with the first shot. ``start_frame``
+    and ``end_frame`` optionally trim the source; omit both to place the whole
+    clip. Additive, runs immediately.
+
+    Returns the placed item plus the audio track's new item count. A "failed"
+    status means Resolve declined the placement (e.g. the track index is out of
+    range or the clip carries no audio).
+    """
+    clip = _find_clip(clip_name)
+    if clip is None:
+        raise ResolveError(f"No clip named '{clip_name}' in the Media Pool.")
+
+    timeline = get_timeline()
+    pool = get_media_pool()
+    audio_tracks = serialize.safe(timeline.GetTrackCount, "audio", default=0) or 0
+    if track_index < 1 or track_index > audio_tracks:
+        raise ResolveError(
+            f"Audio track {track_index} is out of range; the timeline has "
+            f"{audio_tracks} audio track(s). Add one first with add_track('audio')."
+        )
+
+    record = at_frame if at_frame is not None else serialize.safe(
+        timeline.GetStartFrame, default=0
+    )
+    clip_info = {
+        "mediaPoolItem": clip,
+        "mediaType": 2,  # audio only
+        "trackIndex": int(track_index),
+        "recordFrame": int(record),
+    }
+    if start_frame is not None:
+        clip_info["startFrame"] = int(start_frame)
+    if end_frame is not None:
+        clip_info["endFrame"] = int(end_frame)
+
+    before = len(
+        serialize.safe(timeline.GetItemListInTrack, "audio", int(track_index), default=[]) or []
+    )
+    appended = pool.AppendToTimeline([clip_info])
+    after = serialize.safe(timeline.GetItemListInTrack, "audio", int(track_index), default=[]) or []
+    placed = bool(appended) and len(after) > before
+
+    return {
+        "status": "done" if placed else "failed",
+        "clip_name": clip_name,
+        "track_index": int(track_index),
+        "record_frame": int(record),
+        "audio_track_items": len(after),
+        "placed": [serialize.item_to_dict(i) for i in appended if i]
+        if isinstance(appended, list)
+        else None,
+        "hint": None
+        if placed
+        else "Check the track index and that the clip carries audio.",
+    }
+
+
 def insert_audio_at_playhead(
     media_path: str,
     start_offset_samples: int = 0,
@@ -303,6 +374,7 @@ def auto_sync_audio(
 
 def register(mcp) -> None:
     for fn in (
+        add_audio_to_timeline,
         insert_audio_at_playhead,
         transcribe_audio,
         clear_transcription,
