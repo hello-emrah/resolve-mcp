@@ -8,7 +8,7 @@ license = { text = "MIT" }
 authors = [{ name = "hello-emrah" }]
 keywords = ["mcp", "davinci-resolve", "video-editing", "ai", "agent"]
 dependencies = [
-    "mcp[cli]>=1.2.0",
+    "mcp[cli]>=1.2.0,<2",
 ]
 
 [project.urls]
