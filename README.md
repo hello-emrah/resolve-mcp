@@ -1,12 +1,14 @@
 <div align="center">
 
-<img src="assets/logo.png" alt="Svetovid" width="160" />
+<img src="assets/logo.png" alt="Resolve MCP" width="160" />
 
-# Svetovid
+# Resolve MCP
+
+*Formerly Svetovid.*
 
 **An MCP server for seeing and editing video in DaVinci Resolve Studio.**
 
-Svetovid is the four faced Slavic god who watches every direction at once, the all seer. *Svet* is light, *vid* is sight, the same ancient root that gives us the word video. The name signals the one thing most tooling cannot do: see.
+It does the one thing most editing tools for agents cannot: see.
 
 <br/>
 
@@ -16,13 +18,13 @@ Svetovid is the four faced Slavic god who watches every direction at once, the a
 
 ---
 
-Svetovid is a Model Context Protocol server for DaVinci Resolve Studio. Most tools drive an editor blind, pushing metadata they cannot see. Svetovid renders the frame at the playhead and hands it back, so the agent works from what is really on screen, not a guess. It speaks to Resolve over its scripting API, and you and the agent share the same open project. Built for personal use, shared openly, not productised.
+Resolve MCP is a Model Context Protocol server for DaVinci Resolve Studio. Most tools drive an editor blind, pushing metadata they cannot see. Resolve MCP renders the frame at the playhead and hands it back, so the agent works from what is really on screen, not a guess. It speaks to Resolve over its scripting API, and you and the agent share the same open project. Built for personal use, shared openly, not productised.
 
 Runs on your machine, alongside your open Resolve project.
 
 ## Tools
 
-Eighty nine tools spanning the Resolve scripting API, from orienting in a project to delivering the final file. The two at the top are the heart: Svetovid renders the real frame so the agent edits against what is on screen, not blind metadata. Everything destructive sits behind a confirm gate, the tool previews the action and only applies it when called again with `confirm` set, so a first exploratory call never deletes work or starts a render.
+Eighty nine tools spanning the Resolve scripting API, from orienting in a project to delivering the final file. The two at the top are the heart: Resolve MCP renders the real frame so the agent edits against what is on screen, not blind metadata. Everything destructive sits behind a confirm gate, the tool previews the action and only applies it when called again with `confirm` set, so a first exploratory call never deletes work or starts a render.
 
 | Group | Tools |
 |---|---|
@@ -37,7 +39,7 @@ Eighty nine tools spanning the Resolve scripting API, from orienting in a projec
 | Audio | `insert_audio_at_playhead`, `transcribe_audio`, `clear_transcription`, `set_voice_isolation`, `create_subtitles_from_audio`, `auto_sync_audio` |
 | Render and deliver | `list_render_presets`, `load_render_preset`, `get_render_formats`, `get_render_codecs`, `set_render_format_codec`, `set_render_settings`, `add_render_job`, `list_render_jobs`, `start_render`, `stop_render`, `get_render_status`, `delete_render_jobs`, `list_quick_export_presets`, `quick_export` |
 
-Every tool returns plain data the agent can read, and reaches Resolve through the shared scaffolding in `connection.py` (the live handle), `gate.py` (the confirm gate) and `serialize.py` (objects to plain dicts). One module per group under `src/svetovid/tools/`.
+Every tool returns plain data the agent can read, and reaches Resolve through the shared scaffolding in `connection.py` (the live handle), `gate.py` (the confirm gate) and `serialize.py` (objects to plain dicts). One module per group under `src/resolve_mcp/tools/`.
 
 ## Requirements
 
@@ -48,8 +50,8 @@ Every tool returns plain data the agent can read, and reaches Resolve through th
 ## Install
 
 ```bash
-git clone https://github.com/hello-emrah/svetovid-mcp.git
-cd svetovid-mcp
+git clone https://github.com/hello-emrah/resolve-mcp.git
+cd resolve-mcp
 pip install -e .
 ```
 
@@ -60,22 +62,18 @@ Add an entry to `~/.claude.json` under `mcpServers`:
 ```json
 {
   "mcpServers": {
-    "svetovid": {
-      "command": "svetovid-mcp"
+    "resolve": {
+      "command": "resolve-mcp"
     }
   }
 }
 ```
 
-Restart Claude Code. The tools appear under the `mcp__svetovid__*` namespace.
+Restart Claude Code. The tools appear under the `mcp__resolve__*` namespace.
 
 ## Environment
 
 Resolve's scripting paths are auto-detected per platform. Set `RESOLVE_SCRIPT_API` and `RESOLVE_SCRIPT_LIB` in a `.env` only for a non-standard install (see `.env.example`).
-
-## Why "Svetovid"
-
-Svetovid stood on the island of Rügen as a four faced idol, looking north, south, east and west so nothing could pass him unseen, the god of light, sight and divination. The name carries the whole idea of this tool: an editor the agent can see through, watching the timeline from every side. And the root underneath it, *vid*, to see, is the same one that surfaces in the word video.
 
 ## Design philosophy
 

@@ -1,6 +1,6 @@
 """Confirm gate for destructive or expensive actions.
 
-Svetovid's edit surface can delete media, drop timelines and start renders.
+Resolve MCP's edit surface can delete media, drop timelines and start renders.
 Every such tool takes ``confirm: bool = False``. With ``confirm`` False the tool
 changes nothing and returns a preview describing exactly what it would do; the
 caller must call again with ``confirm=True`` to actually apply it. This keeps a

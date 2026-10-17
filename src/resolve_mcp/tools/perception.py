@@ -1,6 +1,6 @@
 """Perception: let the agent see and hear the timeline.
 
-This is the heart of Svetovid. Rather than edit blind against metadata, the
+This is the heart of Resolve MCP. Rather than edit blind against metadata, the
 agent exports the real frame at the playhead and looks at it, and reads a clip's
 audio waveform so it can cut on sound as well as on sight.
 """
@@ -20,7 +20,7 @@ from mcp.server.fastmcp import Image
 from ..connection import ResolveError, get_media_pool, get_project, get_timeline
 from .. import serialize
 
-_SCRATCH = Path(tempfile.gettempdir()) / "svetovid"
+_SCRATCH = Path(tempfile.gettempdir()) / "resolve-mcp"
 
 
 def render_current_frame() -> Image:
@@ -73,7 +73,7 @@ def analyze_audio(
 ) -> dict:
     """Hear a clip: analyse its audio waveform so you can cut on sound.
 
-    Svetovid sees the frame with render_current_frame; this is the matching ear.
+    Resolve MCP sees the frame with render_current_frame; this is the matching ear.
     Pass a media-pool clip name (its file is read from disk) or a direct
     ``file_path`` such as a music track. Reads at most ``max_seconds`` from the
     head. Requires ffmpeg on PATH.

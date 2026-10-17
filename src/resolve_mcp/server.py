@@ -1,4 +1,4 @@
-"""Svetovid MCP server: the entry point that registers the tool modules.
+"""Resolve MCP MCP server: the entry point that registers the tool modules.
 
 Each module under ``tools`` owns one DaVinci Resolve domain and exposes a
 ``register(mcp)`` function. They are registered in a deliberate order: orient and
@@ -24,7 +24,7 @@ from .tools import (
     timeline,
 )
 
-mcp = FastMCP("svetovid")
+mcp = FastMCP("resolve")
 
 # Orient and see.
 state.register(mcp)
